@@ -8,6 +8,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ProductsTable
@@ -19,6 +20,9 @@ class ProductsTable
                 ImageColumn::make('image')
                     ->label('Gambar')
                     ->disk('public'),
+                TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->sortable(),
                 TextColumn::make('name')
                     ->label('Nama Produk')
                     ->searchable()
@@ -29,7 +33,14 @@ class ProductsTable
                     ->sortable(),
                 TextColumn::make('stock')
                     ->label('Stok')
+                    ->badge()
+                    ->color(fn (int $state): string => $state <= 5 ? 'danger' : 'success')
                     ->sortable(),
+            ])
+            ->filters([
+                SelectFilter::make('category')
+                    ->label('Filter Kategori')
+                    ->relationship('category', 'name'),
             ])
             ->recordActions([
                 EditAction::make(),
